@@ -22,28 +22,30 @@ class CompletionExecutor:
             # 'Accept': 'text/event-stream'
         }
 
-        with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
-                           headers=headers, json=completion_request, stream=True) as r:
-            full_response = ''
-            for line in r.iter_lines():
-                if line:
-                    decoded_line = line.decode("utf-8")
-                    full_response += decoded_line
-            return full_response
+        try:
+            with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
+                               headers=headers, json=completion_request, stream=True) as r:
+                r.raise_for_status()  # HTTP 오류가 발생하면 예외를 발생시킴
+                full_response = ''
+                for line in r.iter_lines():
+                    if line:
+                        decoded_line = line.decode("utf-8")
+                        full_response += decoded_line
+                return full_response
+        except requests.exceptions.RequestException as e:
+            print(f"HTTP 요청 실패: {e}")
+            return None
 
 
-def HCX_output_to_response(user):
+def HCX_output_to_response(system, user):
     completion_executor = CompletionExecutor(
         host=os.getenv("CLOVA_X_HOST"),
         api_key=os.getenv("CLOVA_X_APIKEY"),
         api_key_primary_val=os.getenv("CLOVA_X_APIKEY_PRIMARY_VAL"),
         request_id=os.getenv("CLOVA_X_REQUEST_ID")
     )
-    system = """
-            너는 답변이 들어오는것을 그대로 출력해주는 역할을 합니다.
-
-     """
-    preset_text = [{"role":"system","content":system},{"role":"user","content":user}]
+    system = "너는 답변이 들어오는것을 그대로 출력해주는 역할을 합니다."+ system 
+    preset_text = [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
     request_data = {
         'messages': preset_text,
@@ -58,17 +60,11 @@ def HCX_output_to_response(user):
     }
 
     response = completion_executor.execute(request_data)
+
+
     response_dict = json.loads(response)
-    
     assistant_message = response_dict['result']['message']['content']
     return assistant_message
 
 
-# try:
-#     while True:
-#         print("궁금한 것을 물어보세요")
-#         user_quote = input("엔터를 눌러 입력하거나 끝내시려면 ctrl + c를 입력하세요: ")
-#         result = output_to_response(user_quote)
-#         print(result)
-# except KeyboardInterrupt:
-#     print("종료중...")
+# print(HCX_output_to_response("도우미", "안녕하세요"))
