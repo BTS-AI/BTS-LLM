@@ -6,7 +6,11 @@ from langchain_openai import ChatOpenAI
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import AgentExecutor, create_openai_tools_agent, create_openai_functions_agent
+from langchain.agents import (
+    AgentExecutor,
+    create_openai_tools_agent,
+    create_openai_functions_agent,
+)
 
 load_dotenv()
 
@@ -20,7 +24,6 @@ SYSTEM_TEMPLATE = """
 """
 
 
-
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", SYSTEM_TEMPLATE),
@@ -29,7 +32,6 @@ prompt = ChatPromptTemplate.from_messages(
         MessagesPlaceholder(variable_name="agent_scratchpad"),
     ]
 )
-
 
 
 agent = create_openai_tools_agent(llm=model, tools=tools, prompt=prompt)
@@ -51,19 +53,14 @@ agent_with_chat_history = RunnableWithMessageHistory(
 
 def output_to_response(input):
     response = agent_with_chat_history.invoke(
-        {
-            "input": input
-        },
+        {"input": input},
         # 세션 ID를 설정합니다.
         # 여기서는 간단한 메모리 내 ChatMessageHistory를 사용하기 때문에 실제로 사용되지 않습니다
         config={"configurable": {"session_id": "MyTestSessionID"}},
     )
-    final_response = HCX_output_to_response(user=response['output'])
+    final_response = HCX_output_to_response(user=response["output"])
     print(f"답변: {final_response}")
     return final_response
-
-
-
 
 
 try:

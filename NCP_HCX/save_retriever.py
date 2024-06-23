@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings 
+from langchain_openai import OpenAIEmbeddings
 
 
 # 환경 변수 로드

@@ -9,7 +9,9 @@ from pprint import pprint
 from utils.printer import ColorPrinter as Printer  # 컬러 텍스트 출력을 유틸리티
 from utils.input_memory import User_Input_Memory  # 사용자 입력 기억
 
-from available_functions import update_available_functions  # 매핑된 함수를 업데이트하기 위한 함수입니다
+from available_functions import (
+    update_available_functions,
+)  # 매핑된 함수를 업데이트하기 위한 함수입니다
 from available_functions import all_functions  # 사용 가능한 함수 목록입
 from function_to_call import tool_call_function  # GPT의 tool 호출을 처리하기 위한 함수
 
@@ -22,14 +24,14 @@ from prompt_setups.system_setup import HCX_SYSTEM_SETUP
 from utils.messages_parse import parse_messages
 
 
-
 Input_memory = User_Input_Memory()
+
 
 def ask_gpt_functioncall(query):
     # 사용자의 입력들을 가져오기
     Input_memory.add_question(query)
     last_questions = Input_memory.last_questions()
-    append_user_input = '\n'.join(last_questions)
+    append_user_input = "\n".join(last_questions)
     system_user_input = HCX_SYSTEM_SETUP + append_user_input
 
     try:
@@ -63,7 +65,7 @@ def ask_gpt_functioncall(query):
             messages.append(first_response_message)
 
             # 첫번째 메시지에서 tool_calls를 추출
-            tool_calls = getattr(first_response_message, 'tool_calls', [])
+            tool_calls = getattr(first_response_message, "tool_calls", [])
             pprint(tool_calls)
 
             # tool_calls가 있으면, 쿼리를 기억하지 않습니다.
@@ -77,25 +79,31 @@ def ask_gpt_functioncall(query):
 
                 # 각 함수마다 매핑된 함수를 호출
                 for tool_call in tool_calls:
-                    tool_call_response = tool_call_function(tool_call, available_functions)
+                    tool_call_response = tool_call_function(
+                        tool_call, available_functions
+                    )
 
                     # tool_call가 성공적으로 처리되면, 그 응답을 대화 기록에 추가
                     if tool_call_response:
-                        messages.append({
-                            "tool_call_id": tool_call.id,
-                            "role": "tool",
-                            "name": tool_call.function.name,
-                            "content": tool_call_response,
-                        })
+                        messages.append(
+                            {
+                                "tool_call_id": tool_call.id,
+                                "role": "tool",
+                                "name": tool_call.function.name,
+                                "content": tool_call_response,
+                            }
+                        )
 
                 # tool_call 응답을 포함한 업데이트된 대화 기록으로 GPT에 후속 요청
                 # print(messages)
 
                 # print('HCX_MSG: ', type(HCX_MSG))
-                HCX_system,  HCX_user = parse_messages(messages)
+                HCX_system, HCX_user = parse_messages(messages)
                 # print(parse_messages(messages))
-                second_response_message = HCX_output_to_response(HCX_system, HCX_user)  # 문자열 양쪽 공백 제거
-                
+                second_response_message = HCX_output_to_response(
+                    HCX_system, HCX_user
+                )  # 문자열 양쪽 공백 제거
+
                 # print(second_response_message)
                 # 사용자가 볼 수 있도록 전체 대화와 최신 응답을 출력
                 Printer.color_print(messages)

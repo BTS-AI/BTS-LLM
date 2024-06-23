@@ -24,11 +24,13 @@ class ColorPrinter:
             content = message.get("content", "No content")
         else:
             # 메시지가 dictionary가 아닌 경우 속성을 직접 가져옴
-            role = getattr(message, 'role', 'undefined')
-            content = getattr(message, 'content', 'No content')
+            role = getattr(message, "role", "undefined")
+            content = getattr(message, "content", "No content")
 
         # 메시지 role에 기반한 색상 코드 태그를 가져오며, role을 찾을 수 없는 경우 undefined 색상으로 설정
-        color_open_tag = ColorPrinter._color_mapping.get(role, ColorPrinter._color_mapping["undefined"])
+        color_open_tag = ColorPrinter._color_mapping.get(
+            role, ColorPrinter._color_mapping["undefined"]
+        )
 
         # 색상이 적용된 텍스트 라인을 반환
         return f"{color_open_tag}{role} : {content}{color_closing_tag}"
