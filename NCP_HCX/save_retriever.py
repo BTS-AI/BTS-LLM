@@ -8,7 +8,7 @@ from langchain_openai import OpenAIEmbeddings
 load_dotenv()
 
 loaders = [
-    CSVLoader("/Users/sbk/code/NCP_HCX/data/sample_data.csv"),
+    CSVLoader("/Volumes/Extreme SSD/code_products/products/befor_code/code/HCX_project/NCP_HCX/data/데이터완성.csv"),
 ]
 
 # 문서 로드 및 분할
@@ -23,5 +23,5 @@ vectorstore = FAISS.from_documents(docs, embeddings, distance_strategy="cosine")
 
 # retriever = vectorstore.as_retriever()
 
-save_path = "/Users/sbk/code/NCP_HCX/vectordb"
+save_path = "/Volumes/Extreme SSD/code_products/products/befor_code/code/HCX_project/NCP_HCX/vectordb"
 vectorstore.save_local(save_path)

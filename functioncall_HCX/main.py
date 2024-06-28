@@ -45,7 +45,7 @@ def ask_gpt_functioncall(query):
         first_response = client.chat.completions.create(
             model=gpt_3model,
             messages=messages,
-            temperature=0.0,
+            temperature=0.5,
             tools=tools,
             tool_choice="auto",  # default: "auto"
         )

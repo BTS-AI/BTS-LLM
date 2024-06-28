@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
-from users.users_info import user_info
+from users.sample_users_data import get_user_by_id
 
 
 # 환경 변수 로드
@@ -21,22 +21,22 @@ new_vectorstore = FAISS.load_local(
 )
 
 
-member_id = 10001
+member_id = "ruby"
 
 
-def output_to_response(query):
-    user_info.set_member_by_id(member_id)
-    member_data = user_info.get_info()
+def Users_Recommend_Response(query, category, price_range):
+    member_data = get_user_by_id(member_id)
 
-    querys = f"{member_data['gender']}, {member_data['age']}" + query
+    # querys = f"'성별:'{ member_data['gender']}, '카테고리1: 반소매티셔츠', '나이:'{member_data['age']}, '가격대: 5만원 이하', '질문:'", + query
+    querys = f"성별: {member_data['sex']}, 카테고리: {category}, 연령대: {member_data['age']}, 가격대: {price_range}, 질문: {query} 추천해줘"
     print(querys)
     vector_db_results = new_vectorstore.as_retriever(
-        search_type="similarity", search_kwargs={"k": 5}
+        search_type="similarity", search_kwargs={"k": 3}
     ).invoke(querys)
 
     documents_content = ""
     for i, d in enumerate(vector_db_results):
-        document_entry = f"\n## Document {i}.\n {d.page_content}\n\n"
+        document_entry = f"\n## Document {i+1}.\n {d.page_content}\n\n"
         documents_content += document_entry
 
     return documents_content

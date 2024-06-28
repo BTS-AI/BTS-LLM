@@ -60,7 +60,7 @@ def HCX_output_to_response(system, user):
         "topP": 0.8,
         "topK": 0,
         "maxTokens": 256,
-        "temperature": 0.5,
+        "temperature": 0.3,
         "repeatPenalty": 5.0,
         "stopBefore": [],
         "includeAiFilters": True,

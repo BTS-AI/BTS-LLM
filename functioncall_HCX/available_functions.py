@@ -2,7 +2,7 @@ import os
 import sys
 
 from apis.weather import proc_weather
-from NCP_HCX.load_retriever import output_to_response
+from NCP_HCX.load_retriever import Users_Recommend_Response
 
 
 from gpt_function_descriptions.weather_function_description import weather_function
@@ -27,7 +27,7 @@ def update_available_functions():
         if function_name.startswith("weather_"):
             available_functions[function_name] = proc_weather
 
-        elif function_name.startswith("user_"):
-            available_functions[function_name] = output_to_response
+        elif function_name == "Users_Recommend_Response":
+            available_functions[function_name] = Users_Recommend_Response
 
     return available_functions
